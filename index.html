@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Web3 Warrior — Build First. Pay What You Want.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #080808;
+    --deep: #0a0a0a;
+    --card: #111111;
+    --border: #1e1e1e;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #7a6330;
+    --white: #f0ece4;
+    --muted: #6b6560;
+    --sol-light: #b97aff;
+    --eth: #627EEA;
+    --btc: #F7931A;
+    --tron: #e84142;
+    --red-dim: #7a2420;
+    --red: #c0392b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--black); color:var(--white);
+    font-family:'Crimson Pro',Georgia,serif;
+    font-size:18px; line-height:1.7; overflow-x:hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:1000; opacity:0.35;
+  }
+
+  .urgent-banner {
+    background:var(--red-dim); border-bottom:1px solid var(--red);
+    padding:12px 40px; text-align:center;
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:0.25em; color:#e88; text-transform:uppercase;
+  }
+  .urgent-banner strong { color:#ff9999; }
+
+  .hero {
+    min-height:100vh; display:flex; flex-direction:column;
+    justify-content:center; padding:80px 40px 60px;
+    position:relative; border-bottom:1px solid var(--border); overflow:hidden;
+  }
+  .hero-inner { max-width:960px; margin:0 auto; width:100%; }
+  .hero::after {
+    content:''; position:absolute; top:-200px; right:-200px;
+    width:700px; height:700px;
+    background:radial-gradient(circle,rgba(201,168,76,0.05) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .hero-eyebrow {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:0.3em; color:var(--gold); text-transform:uppercase;
+    margin-bottom:32px; opacity:0;
+    animation:fadeUp 0.8s ease forwards 0.2s;
+    display:flex; align-items:center; gap:12px;
+  }
+  .hero-eyebrow::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold); }
+  .hero-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(72px,14vw,160px); line-height:0.9;
+    letter-spacing:-0.02em; color:var(--white); margin-bottom:8px;
+    opacity:0; animation:fadeUp 0.8s ease forwards 0.4s;
+  }
+  .hero-title .gold { color:var(--gold); }
+  .hero-subtitle {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(24px,4vw,48px); letter-spacing:0.05em;
+    color:var(--muted); margin-bottom:48px;
+    opacity:0; animation:fadeUp 0.8s ease forwards 0.6s;
+  }
+  .hero-lead {
+    max-width:620px; font-size:clamp(17px,2vw,21px);
+    color:#c8c0b8; font-style:italic; font-weight:300; line-height:1.8;
+    opacity:0; animation:fadeUp 0.8s ease forwards 0.8s;
+    border-left:2px solid var(--gold-dim); padding-left:24px;
+  }
+  .scroll-hint {
+    position:absolute; bottom:40px; left:40px;
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:0.2em; color:var(--muted); text-transform:uppercase;
+    opacity:0; animation:fadeUp 0.8s ease forwards 1.2s;
+  }
+
+  .section-wrap { max-width:960px; margin:0 auto; padding:80px 40px; border-bottom:1px solid var(--border); }
+  .section-label {
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:0.35em; color:var(--gold-dim); text-transform:uppercase;
+    margin-bottom:40px; display:flex; align-items:center; gap:16px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .story-text { font-size:clamp(18px,2.2vw,22px); line-height:1.85; color:#c0b8b0; font-weight:300; }
+  .story-text p { margin-bottom:28px; }
+  .story-text strong { color:var(--white); font-weight:600; }
+  .story-text em { color:var(--gold-light); font-style:italic; }
+  .pullquote {
+    border-left:3px solid var(--gold); padding:20px 28px;
+    margin:40px 0; background:rgba(201,168,76,0.04);
+  }
+  .pullquote p {
+    font-size:clamp(19px,2.5vw,26px); color:var(--gold-light);
+    font-style:italic; font-weight:300; margin:0 !important; line-height:1.6;
+  }
+  .medical-note {
+    background:#0d0d12; border:1px solid #1e1e2e;
+    border-left:3px solid #627EEA; padding:28px 32px; margin-top:32px;
+  }
+  .medical-note .mlabel {
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:0.3em; color:#627EEA; text-transform:uppercase; margin-bottom:16px;
+  }
+  .medical-note p { font-size:15px; color:#8888aa; line-height:1.7; margin-bottom:0 !important; }
+  .medical-note strong { color:#aaaacc; }
+
+  .skills-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(240px,1fr));
+    gap:1px; background:var(--border); border:1px solid var(--border);
+  }
+  .skill-card { background:var(--card); padding:26px 22px; transition:background 0.3s; }
+  .skill-card:hover { background:#161616; }
+  .skill-icon { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:0.2em; margin-bottom:10px; text-transform:uppercase; }
+  .skill-name { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:0.05em; color:var(--white); margin-bottom:8px; }
+  .skill-desc { font-size:13px; color:var(--muted); line-height:1.6; }
+  .skill-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }
+  .tag { font-family:'JetBrains Mono',monospace; font-size:9px; padding:3px 8px; border:1px solid var(--border); color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+
+  .offer-box {
+    border:1px solid var(--gold-dim); padding:48px; position:relative;
+    background:linear-gradient(135deg,#111008 0%,#0d0d0d 100%);
+  }
+  .offer-box::before {
+    content:'"'; position:absolute; top:-24px; left:36px;
+    font-family:'Bebas Neue',sans-serif; font-size:100px;
+    color:var(--gold-dim); line-height:1; opacity:0.6;
+  }
+  .offer-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,5vw,60px); color:var(--gold-light); line-height:1.05; margin-bottom:24px; }
+  .offer-text { font-size:clamp(16px,1.8vw,19px); color:#b8b2aa; font-weight:300; margin-bottom:32px; line-height:1.8; }
+  .deliverables { list-style:none; margin-bottom:32px; }
+  .deliverables li {
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--white);
+    padding:10px 0; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:12px;
+  }
+  .deliverables li::before { content:'→'; color:var(--gold); flex-shrink:0; }
+  .contact-line {
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+    letter-spacing:0.1em; margin-top:32px; padding-top:24px;
+    border-top:1px solid var(--border); display:flex; flex-wrap:wrap; gap:16px; align-items:center;
+  }
+  .contact-line a { color:var(--gold); text-decoration:none; transition:color 0.2s; }
+  .contact-line a:hover { color:var(--gold-light); }
+
+  .donation-section { background:var(--deep); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .target-amount { font-family:'Bebas Neue',sans-serif; font-size:56px; color:var(--gold); line-height:1; }
+  .target-sub { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:0.2em; text-transform:uppercase; margin-top:4px; }
+  .target-bar { height:4px; background:var(--border); width:100%; margin-top:20px; position:relative; }
+  .target-bar::after { content:''; position:absolute; left:0; top:0; height:100%; width:0%; background:var(--gold); animation:fillBar 2s ease forwards 1s; }
+  @keyframes fillBar { to { width:2%; } }
+
+  .coins-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:32px 0; }
+  .coin-card { border:1px solid var(--border); padding:18px; text-align:center; transition:border-color 0.3s,transform 0.3s; }
+  .coin-card:hover { border-color:var(--gold-dim); transform:translateY(-2px); }
+  .coin-symbol { font-family:'Bebas Neue',sans-serif; font-size:30px; margin-bottom:4px; }
+  .coin-card.sol .coin-symbol { color:var(--sol-light); }
+  .coin-card.eth .coin-symbol { color:var(--eth); }
+  .coin-card.btc .coin-symbol { color:var(--btc); }
+  .coin-card.tron .coin-symbol { color:var(--tron); }
+  .coin-name { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
+
+  .wallet-block {
+    background:var(--card); border:1px solid var(--border);
+    padding:20px 24px; margin-bottom:12px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .wallet-info { flex:1; min-width:180px; }
+  .wallet-label { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:0.25em; text-transform:uppercase; margin-bottom:6px; }
+  .wallet-address { font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1.4vw,13px); color:var(--white); word-break:break-all; letter-spacing:0.04em; }
+  .copy-btn {
+    background:transparent; border:1px solid var(--gold-dim); color:var(--gold);
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.2em;
+    text-transform:uppercase; padding:10px 18px; cursor:pointer; transition:all 0.2s;
+    white-space:nowrap; flex-shrink:0;
+  }
+  .copy-btn:hover { background:var(--gold); color:var(--black); }
+  .copy-btn.copied { background:#1a3d1a; border-color:#2d6b2d; color:#4CAF50; }
+
+  .dm-cta { margin-top:32px; padding:28px 32px; border:1px dashed var(--gold-dim); background:rgba(201,168,76,0.03); }
+  .dm-cta p { font-size:clamp(15px,1.8vw,18px); color:#b8b2aa; font-weight:300; line-height:1.7; }
+  .dm-cta strong { color:var(--gold-light); }
+  .dm-cta a { color:var(--gold); text-decoration:none; }
+  .dm-cta a:hover { color:var(--gold-light); }
+
+  .cta-section { text-align:center; padding:80px 40px 100px; max-width:960px; margin:0 auto; }
+  .cta-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(52px,9vw,104px); color:var(--white); line-height:0.95; margin-bottom:24px; }
+  .cta-title .gold { color:var(--gold); }
+  .cta-sub { font-size:clamp(15px,1.8vw,19px); color:var(--muted); font-style:italic; margin-bottom:48px; max-width:480px; margin-left:auto; margin-right:auto; }
+  .btn-row { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+  .cta-btn { display:inline-block; background:var(--gold); color:var(--black); font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.15em; padding:16px 44px; text-decoration:none; transition:all 0.2s; }
+  .cta-btn:hover { background:var(--gold-light); transform:translateY(-2px); }
+  .cta-btn.outline { background:transparent; border:1px solid var(--gold-dim); color:var(--gold); }
+  .cta-btn.outline:hover { background:rgba(201,168,76,0.08); }
+
+  footer { padding:28px 40px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .footer-name { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--gold); letter-spacing:0.1em; }
+  .footer-note { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.7s ease,transform 0.7s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  .toast { position:fixed; bottom:32px; right:32px; background:#1a3d1a; border:1px solid #2d6b2d; color:#4CAF50; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.15em; padding:14px 24px; z-index:9999; opacity:0; transform:translateY(10px); transition:all 0.3s ease; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateY(0); }
+
+  @media(max-width:600px) {
+    .hero,.section-wrap,.cta-section { padding-left:24px; padding-right:24px; }
+    .offer-box { padding:28px 20px; }
+    footer { flex-direction:column; align-items:flex-start; }
+    .urgent-banner { padding:12px 20px; font-size:10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="urgent-banner">
+  🔴 &nbsp;<strong>Urgent Real-Life Situation</strong> &nbsp;·&nbsp; Fundraising Target: $50,000 &nbsp;·&nbsp; Every contribution matters
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Full-Stack Web3 Developer · Build First · Pay After Delivery</p>
+    <h1 class="hero-title">WEB3<br/><span class="gold">WARRIOR</span></h1>
+    <p class="hero-subtitle">I Ship. You Judge. You Pay.</p>
+    <p class="hero-lead">
+      I am a full-stack developer working across blockchain, Web3, and the open web.
+      A real-life crisis has arrived at my door — sudden, serious, and urgent.
+      I am not stopping. I am building my way out,
+      one delivery at a time, one believer at a time.
+    </p>
+  </div>
+  <p class="scroll-hint">↓ Read my story</p>
+</div>
+
+<!-- STORY -->
+<div class="section-wrap reveal">
+  <p class="section-label">The Story Behind This Page</p>
+  <div class="story-text">
+
+    <p>
+      I have been building full-time in Web3 and technology for years —
+      not as a side hustle, not for the hype, but as a
+      <strong>true believer in what decentralised technology can do for the world.</strong>
+      While I built, my wife worked full-time to keep our family afloat.
+      She never once asked me to stop. She believed in what I was building
+      even when nobody else did.
+    </p>
+
+    <div class="pullquote">
+      <p>"Then, without warning, everything changed."</p>
+    </div>
+
+    <p>
+      A real-life situation has arisen — sudden, serious, and deeply urgent.
+      The kind that doesn't wait for product-market fit or the next funding round.
+      The kind that forces a father to confront what he stands to lose
+      if he doesn't act right now.
+    </p>
+
+    <p>
+      At the centre of everything is my son. ❤️
+      He is 7 and a half years old — extraordinary, complex, full of fight.
+      He is autistic. He has ADHD. And he carries a genetic condition
+      that overlaps with <strong>Duchenne Muscular Dystrophy</strong>,
+      a rare and progressive muscle disorder that affects only
+      a handful of children in the world.
+    </p>
+
+    <p>
+      He was born developing normally. By age three he could speak words,
+      sing rhymes, light up a room.
+      Then, gradually — <em>word by word, sound by sound</em> — he lost it all.
+      He has regressed. Today he speaks only 4 to 5 words,
+      and even those come hesitantly, like signals from a distant star.
+      His CK levels — a clinical marker of muscle damage —
+      range between <strong>6,000 and 22,000</strong>.
+      A healthy child's should be under 200.
+      He is on steroids. He does physiotherapy twice a week.
+      He has occupational therapy, speech therapy, a specialist school, a tutor —
+      an entire ecosystem of care built carefully around him, thread by thread.
+    </p>
+
+    <p>
+      <strong>Every single one of those threads exists because we have not moved.
+      Because I have fought every day to keep his world stable,
+      predictable, and safe.</strong>
+      That stability is now under serious threat.
+    </p>
+
+    <p>
+      I need to raise <strong>$50,000 urgently.</strong>
+      This is the number that keeps my son's care intact,
+      keeps my family together, and keeps a builder at his desk
+      instead of watching everything fall apart.
+      <em>I am not here asking for sympathy.
+      I am offering my best work — and trusting this community
+      to meet me where I am.</em>
+    </p>
+
+    <div class="medical-note">
+      <p class="mlabel">// Medical Context — Full Documents Available via DM</p>
+      <p>
+        Whole Exome Sequencing identified a <strong>Variant of Uncertain Significance</strong>
+        in the DMD gene (Exon 29, Hemizygous/XLR). Multiple in silico tools including
+        M-CAP, FATHMM-MKL, and PrimateAI suggest the variant may be damaging.
+        Clinical phenotypes overlap with
+        <strong>Duchenne Muscular Dystrophy (OMIM #310200)</strong>.
+        Full medical documentation shared privately with verified community members on request.
+      </p>
+    </div>
+
+    <div style="margin-top:40px;padding:24px 28px;border-left:2px solid var(--gold-dim);background:rgba(201,168,76,0.03);">
+  <p style="font-size:clamp(16px,2vw,19px);color:#c8c0b8;font-weight:300;font-style:italic;line-height:1.8;">
+    "I believe in a higher power — and I have full faith that I will sail through this too,
+    just as I have sailed through every storm before.
+    <strong style="color:var(--gold-light);font-style:normal;">This page is not defeat. It is me fighting back.</strong>
+    With every skill I have. With everything I am."
+  </p>
+</div>
+
+  </div>
+</div>
+
+<!-- SKILLS CARD -->
+<div class="section-wrap reveal">
+  <p class="section-label">What I Build</p>
+  <div class="skills-grid">
+
+    <div class="skill-card">
+      <p class="skill-icon">// 01</p>
+      <p class="skill-name">EVM Development</p>
+      <p class="skill-desc">Smart contracts, tokens, and DApps on Ethereum, Polygon, BNB Chain, and all EVM networks.</p>
+      <div class="skill-tags"><span class="tag">Solidity</span><span class="tag">Hardhat</span><span class="tag">Foundry</span><span class="tag">ERC-20</span><span class="tag">ERC-721</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 02</p>
+      <p class="skill-name">Solana Development</p>
+      <p class="skill-desc">On-chain programs, SPL tokens, and high-performance DApps built natively on Solana.</p>
+      <div class="skill-tags"><span class="tag">Rust</span><span class="tag">Anchor</span><span class="tag">Web3.js</span><span class="tag">SPL</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 03</p>
+      <p class="skill-name">Smart Contracts</p>
+      <p class="skill-desc">Auditable, gas-optimised contracts for DeFi, NFTs, DAOs, escrow, vesting, and custom logic.</p>
+      <div class="skill-tags"><span class="tag">Solidity</span><span class="tag">Rust</span><span class="tag">Gas Opt.</span><span class="tag">Audit</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 04</p>
+      <p class="skill-name">Wallet Integration</p>
+      <p class="skill-desc">MetaMask, Phantom, WalletConnect, Coinbase Wallet — seamless multi-wallet support for any DApp.</p>
+      <div class="skill-tags"><span class="tag">MetaMask</span><span class="tag">Phantom</span><span class="tag">WalletConnect</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 05</p>
+      <p class="skill-name">DApp Frontends</p>
+      <p class="skill-desc">Full-stack decentralised application interfaces — beautiful, fast, and production-ready.</p>
+      <div class="skill-tags"><span class="tag">React</span><span class="tag">Next.js</span><span class="tag">Ethers.js</span><span class="tag">Wagmi</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 06</p>
+      <p class="skill-name">ENS & Domain Systems</p>
+      <p class="skill-desc">ENS registration, resolver setup, subdomain management, and on-chain domain integrations.</p>
+      <div class="skill-tags"><span class="tag">ENS</span><span class="tag">Unstoppable</span><span class="tag">SNS</span><span class="tag">IPFS</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 07</p>
+      <p class="skill-name">Bitcoin Core & Scripts</p>
+      <p class="skill-desc">Bitcoin transaction scripting, PSBT construction, multisig wallets, and Lightning network tooling.</p>
+      <div class="skill-tags"><span class="tag">Bitcoin</span><span class="tag">PSBT</span><span class="tag">Multisig</span><span class="tag">Lightning</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 08</p>
+      <p class="skill-name">Python Development</p>
+      <p class="skill-desc">Automation scripts, blockchain data pipelines, bots, APIs, and backend tooling in Python.</p>
+      <div class="skill-tags"><span class="tag">Python</span><span class="tag">Web3.py</span><span class="tag">FastAPI</span><span class="tag">Automation</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 09</p>
+      <p class="skill-name">Website Creation</p>
+      <p class="skill-desc">High-quality websites from scratch — landing pages, news platforms, portfolios, and corporate sites.</p>
+      <div class="skill-tags"><span class="tag">HTML/CSS</span><span class="tag">JS</span><span class="tag">React</span><span class="tag">CMS</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 10</p>
+      <p class="skill-name">Pitch Decks</p>
+      <p class="skill-desc">Investor-ready pitch decks that tell a compelling story — narrative, design, and financials.</p>
+      <div class="skill-tags"><span class="tag">Strategy</span><span class="tag">Design</span><span class="tag">Narrative</span><span class="tag">Deck</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 11</p>
+      <p class="skill-name">Banners & Creatives</p>
+      <p class="skill-desc">Web3 marketing banners, social media creatives, launch graphics, and brand assets.</p>
+      <div class="skill-tags"><span class="tag">Figma</span><span class="tag">Canva Pro</span><span class="tag">Web3 Brand</span></div>
+    </div>
+
+    <div class="skill-card">
+      <p class="skill-icon">// 12</p>
+      <p class="skill-name">Token Launches</p>
+      <p class="skill-desc">End-to-end token creation, metadata, launch infrastructure, and community tooling across chains.</p>
+      <div class="skill-tags"><span class="tag">ERC-20</span><span class="tag">SPL</span><span class="tag">Metaplex</span><span class="tag">Launchpad</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- OFFER -->
+<div class="section-wrap reveal">
+  <p class="section-label">The Offer</p>
+  <div class="offer-box">
+    <p class="offer-title">I Build First.<br/>You Pay After.<br/>Your Call On Amount.</p>
+    <p class="offer-text">
+      Tell me what you need. I will build it — tonight, this week, fast.
+      Once delivered and you are satisfied, you pay me in crypto,
+      whatever you believe the work was worth.
+      No upfront fees. No contracts. No risk on your side.
+      Just a builder who needs to be trusted right now,
+      offering his full skill set as the only proof he has.
+    </p>
+
+    <!-- SMALLER PROJECTS NOTE — insert after offer-text paragraph, before deliverables list -->
+<div style="border:1px solid var(--gold-dim);border-left:3px solid var(--gold);background:rgba(201,168,76,0.06);padding:20px 24px;margin-bottom:32px;position:relative;">
+  <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:10px;">// A Note on Project Size</p>
+  <p style="font-size:clamp(15px,1.8vw,17px);color:#d4cec6;font-weight:300;line-height:1.8;font-style:italic;">
+    "I am racing against time. <strong style="color:var(--white);font-style:normal;">Smaller, faster projects are strongly preferred right now.</strong>
+    If I get locked into a large build and miss my target,
+    my world falls apart — and I cannot let that happen.
+    A $10 job delivered tonight means more to me than a $500 job
+    that takes two weeks. <strong style="color:var(--white);font-style:normal;">Small wins, fast delivery, honest pay — that is all I need.</strong>
+    And remember — you decide what to pay after I deliver.
+    No upfront. No pressure. Just trust."
+  </p>
+</div>
+
+    <ul class="deliverables">
+      <li>EVM or Solana smart contract — any standard or custom logic</li>
+      <li>Full DApp with wallet integration, any chain</li>
+      <li>ENS / on-chain domain setup and management</li>
+      <li>Bitcoin multisig or scripting solution</li>
+      <li>Python automation, bot, or blockchain data pipeline</li>
+      <li>Website, landing page, or crypto news platform</li>
+      <li>Investor pitch deck — narrative, design, financials</li>
+      <li>Web3 banners, social creatives, and launch graphics</li>
+      <li>Token launch end-to-end — any chain</li>
+      <li>Anything else in Web3 or tech — just ask</li>
+    </ul>
+    <div class="contact-line">
+      <span>📩 DM on X →</span>
+      <a href="https://x.com/_moongoat" target="_blank">@_moongoat</a>
+      <span>&nbsp;·&nbsp; ✉️ Email →</span>
+      <a href="mailto:web3.warrior.1981@gmail.com">web3.warrior.1981@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- DONATION -->
+<div class="donation-section">
+<div class="section-wrap reveal" style="background:transparent;">
+  <p class="section-label">Support Directly</p>
+
+  <p class="target-amount">$50,000</p>
+  <p class="target-sub">Fundraising Target · Urgent Situation</p>
+  <div class="target-bar"></div>
+
+  <p style="font-size:clamp(16px,2vw,19px);color:#b8b2aa;font-weight:300;margin-top:40px;margin-bottom:8px;max-width:600px;line-height:1.8;">
+    If my story has moved you and you want to contribute directly —
+    any amount in any coin is received with genuine gratitude.
+    <em>Even a small contribution from a stranger is proof that this community is real.</em>
+  </p>
+
+  <!-- PROGRESS BAR — update 'data-raised' value to current amount received -->
+<div class="progress-wrap" style="margin-top:24px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;">Raised So Far</span>
+    <span id="progress-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--white);letter-spacing:0.15em;"></span>
+  </div>
+  <div style="height:6px;background:var(--border);width:100%;position:relative;border-radius:2px;">
+    <div id="progress-fill" style="height:100%;background:linear-gradient(90deg,#2d6b2d,#4CAF50);border-radius:2px;width:0%;transition:width 1.5s ease;"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:8px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">$0</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">$50,000</span>
+  </div>
+</div>
+
+<script>
+  // ✏️ UPDATE THIS NUMBER to current amount raised in USD
+  const amountRaised = 0;
+
+  const target = 50000;
+  const pct = Math.min((amountRaised / target) * 100, 100).toFixed(1);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = '$' + amountRaised.toLocaleString() + ' / $50,000 (' + pct + '%)';
+</script>
+
+  <div class="coins-grid">
+    <div class="coin-card sol"><p class="coin-symbol">◎</p><p class="coin-name">Solana / SOL</p></div>
+    <div class="coin-card eth"><p class="coin-symbol">Ξ</p><p class="coin-name">Ethereum / ETH</p></div>
+    <div class="coin-card btc"><p class="coin-symbol">₿</p><p class="coin-name">Bitcoin / BTC</p></div>
+    <div class="coin-card tron"><p class="coin-symbol">₮</p><p class="coin-name">USDT · TRC20</p></div>
+  </div>
+
+  <div class="wallet-block">
+    <div class="wallet-info">
+      <p class="wallet-label">₮ USDT TRC20 — Tron Network</p>
+      <p class="wallet-address" id="trc20-addr">TAdmW3KGivcR4sG73Z8oHLQFmmyJ2A1npV</p>
+    </div>
+    <button class="copy-btn" onclick="copyWallet('trc20-addr',this)">Copy</button>
+  </div>
+
+  <div class="wallet-block">
+    <div class="wallet-info">
+      <p class="wallet-label">◎ Solana — SOL / USDC / SPL Tokens</p>
+      <p class="wallet-address" id="sol-addr">2ouviNPn2tC5NonFMoRe6dp9hLdyiJzkNE2MFnbaFxJF</p>
+    </div>
+    <button class="copy-btn" onclick="copyWallet('sol-addr',this)">Copy</button>
+  </div>
+
+  <div class="wallet-block">
+    <div class="wallet-info">
+      <p class="wallet-label">Ξ EVM — ETH / BNB / Polygon / USDT / USDC</p>
+      <p class="wallet-address" id="eth-addr">0x22f1827a50fad3aee7105b2be17af2aefc045c02</p>
+    </div>
+    <button class="copy-btn" onclick="copyWallet('eth-addr',this)">Copy</button>
+  </div>
+
+  <div class="wallet-block">
+    <div class="wallet-info">
+      <p class="wallet-label">₿ Bitcoin</p>
+      <p class="wallet-address" id="btc-addr">bc1qx8y3p7kavzwrksj759326ecayfxfh0q4v4h03k</p>
+    </div>
+    <button class="copy-btn" onclick="copyWallet('btc-addr',this)">Copy</button>
+  </div>
+
+  <div class="dm-cta">
+    <p>
+      <strong>Are you part of the Web3 or tech community and want to know the full story before contributing?</strong><br/>
+      I respect that completely. I am willing to share everything —
+      the full situation, my son's medical documents, and all relevant details —
+      privately, in a DM. No pressure. Just transparency between humans.<br/><br/>
+      Find me at <a href="https://x.com/_moongoat" target="_blank"><strong>@_moongoat</strong></a> on X
+      or email <a href="mailto:web3.warrior.1981@gmail.com"><strong>web3.warrior.1981@gmail.com</strong></a>
+    </p>
+  </div>
+
+</div>
+</div>
+
+<!--
+SHOUTOUT SECTION — uncomment this entire block when you have at least 1 real contributor
+
+<div style="border-bottom:1px solid var(--border);">
+<div class="section-wrap reveal" style="padding-top:60px;padding-bottom:60px;">
+  <p class="section-label">Hall of Warriors</p>
+  <p style="font-size:clamp(16px,2vw,19px);color:#b8b2aa;font-weight:300;margin-bottom:40px;max-width:560px;line-height:1.8;">
+    These are the people who believed first.
+    Before there was proof. Before there was traction.
+    They showed up anyway. This page remembers them forever.
+  </p>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+
+    <!-- ENTRY TEMPLATE — duplicate this block for each contributor
+    <div style="background:var(--card);border:1px solid var(--border);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);">#1</span>
+        <div>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--white);letter-spacing:0.1em;">@handle_or_anon</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-top:4px;text-transform:uppercase;">Contributed · Date</p>
+        </div>
+      </div>
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#4CAF50;">$AMOUNT</span>
+    </div>
+    -->
+
+  </div>
+</div>
+</div>
+-->
+
+<!-- CTA -->
+<div class="cta-section reveal">
+  <p class="cta-title">LET'S<br/><span class="gold">BUILD.</span></p>
+  <p class="cta-sub">Tell me what you need. I will ship it. My family is counting on every delivery.</p>
+  <div class="btn-row">
+    <a href="https://x.com/_moongoat" class="cta-btn" target="_blank">DM @_moongoat</a>
+    <a href="mailto:web3.warrior.1981@gmail.com" class="cta-btn outline">Send Email</a>
+  </div>
+</div>
+
+<footer>
+  <p class="footer-name">Web3 Warrior</p>
+  <p class="footer-note">EVM · Solana · Bitcoin · TRC20 · Python · Web · Building Across Every Chain</p>
+</footer>
+
+<div class="toast" id="toast">✓ Wallet address copied</div>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold:0.08 });
+  reveals.forEach(r => observer.observe(r));
+
+  function copyWallet(id, btn) {
+    const addr = document.getElementById(id).textContent.trim();
+    navigator.clipboard.writeText(addr).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      showToast();
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
+    }).catch(() => {
+      const el = document.getElementById(id);
+      const range = document.createRange();
+      range.selectNode(el);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      showToast();
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
+    });
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>
